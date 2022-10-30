@@ -29,7 +29,7 @@ function Contact() {
         })
     }
 
-    const fetchAPI = async (e) => {
+    const getRents = async (e) => {
         e.preventDefault()
         const fullAddress = Object.values(address).join(', ')
         // const fullAddress = '839 McCullough Ave, Orlando, FL, 32803'
@@ -91,7 +91,7 @@ function Contact() {
                             Drive, San Antonio, TX, 78244
                         </p>
                         <form
-                            onSubmit={fetchAPI}
+                            onSubmit={getRents}
                             className="flex flex-col gap-6 mt-9"
                         >
                             <div className="relative rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:border-grape-500 focus-within:ring-1 focus-within:ring-grape-500">
@@ -181,7 +181,7 @@ function Contact() {
                 <h3 className="text-3xl font-bold tracking-tight sm:text-3xl">
                     Results
                 </h3>
-                <ul role="list" className="divide-y divide-gray-200">
+                <ul className="divide-y divide-gray-200">
                     {apiResponse.listings.map((rental) => (
                         <ListOfRentals rental={rental} />
                     ))}
