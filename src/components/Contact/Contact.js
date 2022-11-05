@@ -1,26 +1,15 @@
 import { useState } from 'react'
+import Address from '../../models/address'
 
-function Contact() {
+function AddressForm({ handleSubmit, listings }) {
+    // Managing the address Form
     const [address, setAddress] = useState({
         street: '',
         city: '',
         state: '',
         zip: '',
     })
-    const [apiResponse, setApiResponse] = useState({
-        listings: [
-            {
-                id: 0,
-                address: 'Address Street',
-                price: '0.00',
-                propertyType: 'N/A',
-            },
-        ],
-    })
-
-    const restEndPoint =
-        'https://realtymole-rental-estimate-v1.p.rapidapi.com/rentalPrice?address='
-
+    // Handling Form Events
     const handleChange = (e) => {
         const value = e.target.value
         setAddress({
@@ -29,31 +18,12 @@ function Contact() {
         })
     }
 
-    const getRents = async (e) => {
+    const handleFormSubmit = (e) => {
         e.preventDefault()
-        const fullAddress = Object.values(address).join(', ')
-        // const fullAddress = '839 McCullough Ave, Orlando, FL, 32803'
-        const options = {
-            method: 'GET',
-            headers: {
-                'X-RapidAPI-Key': process.env.REACT_APP_API_KEY,
-                'X-RapidAPI-Host':
-                    'realtymole-rental-estimate-v1.p.rapidapi.com',
-            },
-        }
-        try {
-            const response = await fetch(
-                `${restEndPoint} ${fullAddress}`,
-                options
-            )
-            const jsonResponse = await response.json()
-            console.log(jsonResponse)
-            setApiResponse(jsonResponse)
-        } catch (err) {
-            console.error(err)
-        }
+        handleSubmit(Address.build(address))
     }
 
+    // Rendering the State
     return (
         <div className="relative bg-white">
             <div className="lg:absolute lg:inset-0">
@@ -91,7 +61,7 @@ function Contact() {
                             Drive, San Antonio, TX, 78244
                         </p>
                         <form
-                            onSubmit={getRents}
+                            onSubmit={handleFormSubmit}
                             className="flex flex-col gap-6 mt-9"
                         >
                             <div className="relative rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:border-grape-500 focus-within:ring-1 focus-within:ring-grape-500">
@@ -182,8 +152,8 @@ function Contact() {
                     Results
                 </h3>
                 <ul className="divide-y divide-gray-200">
-                    {apiResponse.listings.map((rental) => (
-                        <ListOfRentals rental={rental} />
+                    {listings.map((rental, i) => (
+                        <ListOfRentals key={`listing-${i}`} rental={rental} />
                     ))}
                 </ul>
             </div>
@@ -213,4 +183,4 @@ function ListOfRentals({ rental }) {
     )
 }
 
-export default Contact
+export default AddressForm
