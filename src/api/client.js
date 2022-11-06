@@ -1,27 +1,28 @@
-import Address from '../models/address'
+const DOMAIN = process.env.REACT_APP_API_DOMAIN
 
-// API is configured
-const restEndPoint = 'https://realtymole-rental-estimate-v1.p.rapidapi.com/'
+function get(endPoint, params, fromJsonDecoder) {
+    const url =
+        Object.keys.length === 0
+            ? `${DOMAIN}${endPoint}`
+            : `${DOMAIN}${endPoint}?${new URLSearchParams(params).toString()}`
 
-// rentalEstimate : Address -> Promise (List Listing)
-// Takes an address and returns comparable rental listings
-function getRentalEstimate(address) {
     const options = {
         method: 'GET',
         headers: {
             'X-RapidAPI-Key': process.env.REACT_APP_API_KEY,
-            'X-RapidAPI-Host': 'realty-mole-property-api.p.rapidapi.com',
+            'X-RapidAPI-Host': process.env.REACT_APP_API_HOST,
         },
     }
-    return fetch(
-        `${restEndPoint}rentalPrice?address=${encodeURI(
-            Address.toString(address)
-        )}`,
-        options
-    )
+
+    return fetch(url, options)
         .then((res) => res.json())
-        .then((apiResponse) => apiResponse.listings)
+        .then((apiResponse) => fromJsonDecoder(apiResponse))
 }
 
-const APIClient = { getRentalEstimate }
+export const ENDPOINTS = {
+    listings: 'rentalPrice',
+    // Other API Endpoints...
+}
+
+const APIClient = { get }
 export default APIClient

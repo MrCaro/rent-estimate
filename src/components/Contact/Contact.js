@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Address from '../../models/address'
+import Listing from '../../models/listing'
 
 function AddressForm({ handleSubmit, listings }) {
     // Managing the address Form
@@ -20,7 +21,7 @@ function AddressForm({ handleSubmit, listings }) {
 
     const handleFormSubmit = (e) => {
         e.preventDefault()
-        handleSubmit(Address.build(address))
+        handleSubmit(Address.fromJson(address))
     }
 
     // Rendering the State
@@ -152,8 +153,8 @@ function AddressForm({ handleSubmit, listings }) {
                     Results
                 </h3>
                 <ul className="divide-y divide-gray-200">
-                    {listings.map((rental, i) => (
-                        <ListOfRentals key={`listing-${i}`} rental={rental} />
+                    {listings.map((listing, i) => (
+                        <ListOfRentals key={`listing-${i}`} listing={listing} />
                     ))}
                 </ul>
             </div>
@@ -161,21 +162,22 @@ function AddressForm({ handleSubmit, listings }) {
     )
 }
 
-function ListOfRentals({ rental }) {
+// ListOfRentals : Listing -> Html
+function ListOfRentals({ listing, i }) {
     return (
-        <li key={rental.id} className="py-4">
+        <li key={`listing-${i}`} className="py-4">
             <div className="flex space-x-3">
                 <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between">
                         <h3 className="text-lg font-medium text-gray-900">
-                            {rental.address}
+                            {Address.street(Listing.address(listing))}
                         </h3>
                         <p className="text-md font-bold text-grape-500">
-                            US${rental.price}
+                            US${Listing.price(listing)}
                         </p>
                     </div>
                     <p className="text-sm font-medium text-left text-gray-500">
-                        {rental.propertyType}
+                        {Listing.propertyType(listing)}
                     </p>
                 </div>
             </div>

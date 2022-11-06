@@ -4,12 +4,12 @@ import Footer from '../Footer/Footer'
 import Header from '../Header/Header'
 import Hero from '../Hero/Hero'
 import { useState } from 'react'
-import APIClient from '../../api/client'
+import Listing from '../../models/listing'
 
 function App() {
     const [listings, setListings] = useState([])
     const handleAddress = async (address) => {
-        const newListings = await APIClient.getRentalEstimate(address)
+        const newListings = await Listing.fetchListingsNearAddress(address)
         setListings(newListings)
     }
 
