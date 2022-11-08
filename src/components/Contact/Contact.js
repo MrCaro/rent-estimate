@@ -1,25 +1,20 @@
 import { useState } from 'react'
+import Address from '../../utils/address'
+import Listing from '../../utils/listing'
 
 function Contact() {
+    const [listings, setListings] = useState([])
+    const handleAddress = async (address) => {
+        const newListings = await Listing.fetchListingsNearAddress(address)
+        setListings(newListings)
+    }
+
     const [address, setAddress] = useState({
         street: '',
         city: '',
         state: '',
         zip: '',
     })
-    const [apiResponse, setApiResponse] = useState({
-        listings: [
-            {
-                id: 0,
-                address: 'Address Street',
-                price: '0.00',
-                propertyType: 'N/A',
-            },
-        ],
-    })
-
-    const restEndPoint =
-        'https://realtymole-rental-estimate-v1.p.rapidapi.com/rentalPrice?address='
 
     const handleChange = (e) => {
         const value = e.target.value
@@ -29,29 +24,9 @@ function Contact() {
         })
     }
 
-    const getRents = async (e) => {
+    const handleFormSubmit = (e) => {
         e.preventDefault()
-        const fullAddress = Object.values(address).join(', ')
-        // const fullAddress = '839 McCullough Ave, Orlando, FL, 32803'
-        const options = {
-            method: 'GET',
-            headers: {
-                'X-RapidAPI-Key': process.env.REACT_APP_API_KEY,
-                'X-RapidAPI-Host':
-                    'realtymole-rental-estimate-v1.p.rapidapi.com',
-            },
-        }
-        try {
-            const response = await fetch(
-                `${restEndPoint} ${fullAddress}`,
-                options
-            )
-            const jsonResponse = await response.json()
-            console.log(jsonResponse)
-            setApiResponse(jsonResponse)
-        } catch (err) {
-            console.error(err)
-        }
+        handleAddress(Address.fromJson(address))
     }
 
     return (
@@ -91,7 +66,7 @@ function Contact() {
                             Drive, San Antonio, TX, 78244
                         </p>
                         <form
-                            onSubmit={getRents}
+                            onSubmit={handleFormSubmit}
                             className="flex flex-col gap-6 mt-9"
                         >
                             <div className="relative rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:border-grape-500 focus-within:ring-1 focus-within:ring-grape-500">
@@ -182,8 +157,11 @@ function Contact() {
                     Results
                 </h3>
                 <ul className="divide-y divide-gray-200">
-                    {apiResponse.listings.map((rental) => (
-                        <ListOfRentals rental={rental} />
+                    {listings.map((listing, i) => (
+                        <ListingRentals
+                            key={`listing-${i}`}
+                            listing={listing}
+                        />
                     ))}
                 </ul>
             </div>
@@ -191,21 +169,21 @@ function Contact() {
     )
 }
 
-function ListOfRentals({ rental }) {
+function ListingRentals({ listing, i }) {
     return (
-        <li key={rental.id} className="py-4">
+        <li key={`listing-${i}`} className="py-4">
             <div className="flex space-x-3">
                 <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between">
                         <h3 className="text-lg font-medium text-gray-900">
-                            {rental.address}
+                            {Address.street(Listing.address(listing))}
                         </h3>
                         <p className="text-md font-bold text-grape-500">
-                            US${rental.price}
+                            US${Listing.price(listing)}
                         </p>
                     </div>
                     <p className="text-sm font-medium text-left text-gray-500">
-                        {rental.propertyType}
+                        {Listing.propertyType(listing)}
                     </p>
                 </div>
             </div>
