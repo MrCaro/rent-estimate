@@ -1,8 +1,14 @@
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import Address from '../../utils/address'
 import Listing from '../../utils/listing'
 
 function Contact() {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm()
     const [listings, setListings] = useState([])
     const handleAddress = async (address) => {
         const newListings = await Listing.fetchListingsNearAddress(address)
@@ -24,8 +30,7 @@ function Contact() {
         })
     }
 
-    const handleFormSubmit = (e) => {
-        e.preventDefault()
+    const handleFormSubmit = () => {
         handleAddress(Address.fromJson(address))
     }
 
@@ -66,7 +71,7 @@ function Contact() {
                             Drive, San Antonio, TX, 78244
                         </p>
                         <form
-                            onSubmit={handleFormSubmit}
+                            onSubmit={handleSubmit(handleFormSubmit)}
                             className="flex flex-col gap-6 mt-9"
                         >
                             <div className="relative rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:border-grape-500 focus-within:ring-1 focus-within:ring-grape-500">
@@ -82,11 +87,16 @@ function Contact() {
                                     name="street"
                                     id="street"
                                     className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
-                                    placeholder="5500 Grand Lake
-                                    Drive"
+                                    placeholder="5500 Grand Lake Drive"
+                                    {...register('street', { required: true })}
                                     onChange={handleChange}
                                 />
                             </div>
+                            {errors.street && (
+                                <span className="text-sm text-red-500">
+                                    *address field is required
+                                </span>
+                            )}
                             <div className="relative rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:border-grape-500 focus-within:ring-1 focus-within:ring-grape-500">
                                 <label
                                     htmlFor="city"
@@ -101,9 +111,15 @@ function Contact() {
                                     id="city"
                                     className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
                                     placeholder="San Antonio"
+                                    {...register('city', { required: true })}
                                     onChange={handleChange}
                                 />
                             </div>
+                            {errors.city && (
+                                <span className="text-sm text-red-500">
+                                    *city field is required
+                                </span>
+                            )}
                             <div className="relative rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:border-grape-500 focus-within:ring-1 focus-within:ring-grape-500">
                                 <label
                                     htmlFor="state"
@@ -118,9 +134,15 @@ function Contact() {
                                     id="state"
                                     className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
                                     placeholder="TX"
+                                    {...register('state', { required: true })}
                                     onChange={handleChange}
                                 />
                             </div>
+                            {errors.state && (
+                                <span className="text-sm text-red-500">
+                                    *state field is required
+                                </span>
+                            )}
                             <div className="relative rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:border-grape-500 focus-within:ring-1 focus-within:ring-grape-500">
                                 <label
                                     htmlFor="zip"
@@ -135,9 +157,15 @@ function Contact() {
                                     id="zip"
                                     className="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
                                     placeholder="78244"
+                                    {...register('zip', { required: true })}
                                     onChange={handleChange}
                                 />
                             </div>
+                            {errors.zip && (
+                                <span className="text-sm text-red-500">
+                                    *zip field is required
+                                </span>
+                            )}
                             <div className="pt-5">
                                 <div className="flex justify-end">
                                     <button
